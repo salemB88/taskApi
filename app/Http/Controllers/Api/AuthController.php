@@ -50,13 +50,7 @@ class AuthController extends Controller
 
 
     public function updatePassword(Request $request){
-        $user=auth()->user();
-   if(Hash::check($request->password,$user->password)){
-       return "S";
-   }
-        if(!Hash::check($request->password,$user->password)){
-            return response()->json(['message'=>'invalid password'],401);
-        }
+
 
         $validation= $request->validate
         ([
@@ -65,6 +59,14 @@ class AuthController extends Controller
                 'new_password_confirmation' => 'required'
             ]
         );
+        $user=auth()->user();
+
+
+        if(!Hash::check($request->password,$user->password)){
+            return response()->json(['message'=>'invalid password'],401);
+        }
+
+
         $user->password=bcrypt($request->new_password);
         if($user->save()){
             return response()->json(['message'=>'update successful']);

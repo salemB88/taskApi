@@ -23,7 +23,15 @@ Route::post('register','Api\AuthController@register');
 Route::post('login', 'Api\AuthController@login');
 Route::middleware('auth:api')->prefix('user')->group(function () {
 
-    Route::get('update/password', 'Api\AuthController@updatePassword');
-    Route::get('update/profile', 'Api\AuthController@updateProfile');
+    Route::post('update/password', 'Api\AuthController@updatePassword');
+    Route::post('update/profile', 'Api\AuthController@updateProfile');
+
+    Route::put('category/{CategoryId}/restore', 'Api\CategoryController@restore');
+
     Route::delete('delete', 'Api\AuthController@delete');
+
+    Route::resource('category','Api\CategoryController');
+    Route::resource('task','Api\TaskController');
 });
+
+
