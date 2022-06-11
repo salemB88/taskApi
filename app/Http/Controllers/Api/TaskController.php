@@ -8,6 +8,7 @@ use App\Http\Resources\TaskResource;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
@@ -144,8 +145,21 @@ return $user;
         }
         if ($task->forceDelete())
         {
+$userEmail=$task->user()->email;
+            $taskTitle=$task->name;
 
             Storage::deleteDirectory('public/tasks/'.$task->id);
+
+            //Send notification email to alert user when task deleted
+            Mail::send([],[],function ($message) use ($userEmail, $taskTitle){
+                $message->subject('Task was delete Successful');
+                $message->to($userEmail);
+                $message->setBody('<h1>Task Deleted</h1><p>'.$taskTitle.'</p>','text/html');
+
+            });
+
+
+
             return response()->json(['message' => 'Deleted Successful']);
             }
 
