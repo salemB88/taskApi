@@ -48,4 +48,8 @@ class User extends Authenticatable
     public function Tasks(){
         return $this->hasMany(Task::class);
     }
+
+    public function Files(){
+        return $this->hasMany(File::class);
+    }
 }

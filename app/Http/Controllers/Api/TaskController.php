@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FileResource;
+use App\Http\Resources\TaskResource;
 use App\Models\Category;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -65,7 +68,14 @@ return $user;
      */
     public function show(Task $task)
     {
-        //
+        if(auth()->user()->id!=$task->id){
+            return response()->json(['message' => 'Error not Auth'], 401);
+        } else {
+            $task->load('Files');
+
+            return new TaskResource($task);
+        }
+
     }
 
     /**
@@ -119,6 +129,29 @@ return $user;
             $task->delete();
             return response()->json(['message' => 'Delete Successful'], 402);
         }
+
+
+    }
+
+    public function forceDelete($taskId)
+    {
+
+        $task = Task::withTrashed()->findOrFail($taskId);
+
+        //check if user not own this gategory or didn't have access
+        if (auth()->user()->id != $task->user_id) {
+            return response()->json(['message' => 'Error not Auth'], 401);
+        }
+        if ($task->forceDelete())
+        {
+
+            Storage::deleteDirectory('public/tasks/'.$task->id);
+            return response()->json(['message' => 'Deleted Successful']);
+            }
+
+        return response()->json(['message' => 'Error Try Again'], 500);
+
+
 
 
     }

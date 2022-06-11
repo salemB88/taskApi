@@ -21,4 +21,8 @@ class Category extends Model
     public function Tasks(){
         return $this->hasMany(Task::class);
     }
+
+    public function File(){
+        return $this->hasManyThrough(File::class,Task::class);
+    }
 }

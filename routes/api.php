@@ -18,20 +18,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::post('register','Api\AuthController');
+
+
+//AuthController
 Route::post('register','Api\AuthController@register');
 Route::post('login', 'Api\AuthController@login');
+
+
 Route::middleware('auth:api')->prefix('user')->group(function () {
 
+//AuthController
     Route::post('update/password', 'Api\AuthController@updatePassword');
     Route::post('update/profile', 'Api\AuthController@updateProfile');
-
-    Route::put('category/{CategoryId}/restore', 'Api\CategoryController@restore');
-
     Route::delete('delete', 'Api\AuthController@delete');
 
+//CategoryController
     Route::resource('category','Api\CategoryController');
+    Route::put('category/{CategoryId}/restore', 'Api\CategoryController@restore');
+
+    //TaskController
     Route::resource('task','Api\TaskController');
+    Route::put('task/{TaskId}/restore', 'Api\TaskController@restore');
+    Route::delete('task/{taskId}', 'Api\TaskController@forceDelete');
+
+    //FileController
+    Route::post('file/{TaskId}/uploade','Api\FileController@uploade');
+    Route::post('file/{TaskId}/uploade','Api\FileController@uploade');
+    Route::delete('file/{file}','Api\FileController@destroy');
 });
 
 
